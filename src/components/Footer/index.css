@@ -6,7 +6,6 @@
 	max-width: 180px;
 }
 
-
 .footer {
 	width: 100%;
 	background-color: #FFE44D;
@@ -20,8 +19,6 @@
 	align-items: flex-start;
 	gap: 10px;
 }
-
-
 
 .footer__col {
 	display: flex;
@@ -98,6 +95,7 @@
 	padding: 0;
 	margin: 0;
 }
+
 .social__logo{
   opacity: 0.7;
   display: flex;

@@ -7,7 +7,7 @@ import { Header } from "../Header/Header";
 import "./App.scss";
 import { api } from "../../utils/api";
 import { findLike, useDebounce } from "../../utils/utils";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 // import {Product} from '../Product/Product';
 import { CatalogPage } from "../../pages/Catalog/CatalogPage";
 import { ProductPage } from "../../pages/Product/ProductPage";
@@ -16,7 +16,13 @@ import { Favorites } from "../../pages/Favorites/FavoritesPage";
 import { NotFound } from "../../pages/NotFound/NotFound";
 import { UserContext } from "../../context/userContext";
 import { CardContext } from "../../context/cardContext";
-
+import { RegistrationForm } from "../Form/RegistrationForm";
+import { Form } from "../Form/Form";
+import { Modal } from "../Modal/Modal";
+import { Login } from "../Auth/Login/Login";
+import { Register } from "../Auth/Register/Register";
+import { ResetPassword } from "../Auth/ResetPassword/ResetPassword";
+import { parseJwt } from "../../utils/parseJWT";
 
 function App() {
   const [cards, setCards] = useState([]);
@@ -24,25 +30,32 @@ function App() {
   const [parentCounter, setParentCounter] = useState(0);
   const [currentUser, setCurrentUser] = useState({});
   const [favorites, setFavorites] = useState([]);
-  
-  
-  // с фильтрацией по id пользователя
-  // const filteredCards = (products, id) => products.filter((e) => e.author._id === id);
-  //  или products для всех продуктов
-  const filteredCards = (products, id) => {
-    return products
-  };
-  
+  const [formData, setFormData] = useState([]);
+  const [activeModal, setShowModal] = useState(false);
+  const [isAuthentificated, setIsAuthentificated] = useState(false);
+
+  // показ продуктов с фильтрацией по id пользователя
+  const filteredCards = (products, id) =>
+    products.filter((e) => e.author._id === id);
+  //  показ всех продуктов
+  // const filteredCards = (products, _id) => {
+  //   return products;
+  // };
+  // поиск товара
   const handleSearch = (search) => {
-    api.searchProducts(search).then((data) => setCards(filteredCards(data, currentUser._id)));
+    api
+      .searchProducts(search)
+      .then((data) => setCards(filteredCards(data, currentUser._id)));
   };
+
   const debounceValueInApp = useDebounce(searchQuery, 500);
 
-  // с фильтрацией по id пользователя
+  // функция по нажатию/отжатию лайка с фильтрацией по id пользователя
   function handleProductLike(product) {
     // понимаем , отлайкан ли продукт
     const isLiked = findLike(product, currentUser);
-    isLiked
+    //Если не отлайкан, значит действие было совершено для добавления лайка
+    return isLiked
       ? // Если товар был с лайком, значит было действие по удалению лайка
         api.deleteLike(product._id).then((newCard) => {
           // newCard - карточка с уже изменненым количеством лайков
@@ -51,13 +64,16 @@ function App() {
           );
           setCards(filteredCards(newCards, currentUser._id));
           setFavorites((state) => state.filter((f) => f._id !== newCard._id));
+          return newCard;
         })
       : // Если не отлайкан, значит действие было совершено для добавления лайка.
         api.addLike(product._id).then((newCard) => {
           const newCards = cards.map((e) =>
-            e._id === newCard._id ? newCard : e);
+            e._id === newCard._id ? newCard : e
+          );
           setCards(filteredCards(newCards, currentUser._id));
           setFavorites((favor) => [...favor, newCard]);
+          return newCard;
         });
   }
 
@@ -67,8 +83,8 @@ function App() {
     handleSearch(debounceValueInApp);
   }, [debounceValueInApp]);
 
-  //  Первоначальная загрузка карточек/продуктов/постов/сущностей и данных юзера
-   useEffect(() => {
+  //  Первоначальная загрузка продуктов и данных пользователя
+  useEffect(() => {
     Promise.all([api.getUserInfo(), api.getProductList()]).then(
       ([userData, productData]) => {
         // сеттим юзера
@@ -82,11 +98,9 @@ function App() {
         setFavorites(fav);
       }
     );
-  }, []);
- 
-
+  }, [isAuthentificated]);
+  // сортировка продуктов
   const setSortCards = (sort) => {
- 
     if (sort === "Сначала дешевые") {
       const newCards = cards.sort((a, b) => a.price - b.price);
       setCards([...newCards]);
@@ -110,16 +124,16 @@ function App() {
       setCards([...newCards]);
     }
   };
+  // удаление продукта
   const onProductDelete = async (id) => {
     try {
-    const res = await api.deleteProduct(id);
-    setCards((state) => state.filter(e => e._id !== res._id))
+      const res = await api.deleteProduct(id);
+      setCards((state) => state.filter((e) => e._id !== res._id));
     } catch (error) {
-      alert('Нельзя удалить чужой товар');
+      alert("Нельзя удалить чужой товар");
     }
   };
- 
-
+  // контекст
   const contextValue = {
     setSort: setSortCards,
     currentUser,
@@ -127,6 +141,7 @@ function App() {
     setSearchQuery,
     parentCounter,
     setParentCounter,
+    isAuthentificated,
   };
   const contextCardValue = {
     cards,
@@ -134,50 +149,128 @@ function App() {
     handleProductLike,
     onProductDelete,
     favorites,
-    setFavorites
+    setFavorites,
   };
+
+  // проверка авторизации пользователя
+  const navigate = useNavigate();
+  // uncodedToken-parseJWT - раскладка токена (jwt.io)
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    // const authPath = ["/reset-password", "/register"];
+    const uncodedToken = parseJwt(token);
+    if (uncodedToken?._id) {
+      setIsAuthentificated(true);
+    }
+    // else if (!authPath.includes(location.pathname)) {
+    //   navigate("/login");
+    // }
+  }, [navigate]);
+
   return (
     <>
       <UserContext.Provider value={contextValue}>
         <CardContext.Provider value={contextCardValue}>
           {/*Header*/}
-          <Header />
-
+          <Header setShowModal={setShowModal} />
           {/*content*/}
-          <main className="content container">
-            
-            <Routes>
-              <Route path="/" element={<CatalogPage />}></Route>
-              <Route
-                path="/product/:productId"
-                element={<ProductPage setParentCounter={setParentCounter} />}
-              ></Route>
-              <Route path="faq" element={<FaqPage/>}></Route>
-              <Route path="favorites" element={<Favorites/>}></Route>
-              <Route path="*" element={<NotFound/>}></Route>
-            </Routes>
-
-            {/* Card */}
-            {/* <div className='content__cards'>  </div> */}
-            {/* <CardList
-      handleProductLike={handleProductLike}
-      currentUser={currentUser} 
-      setParentCounter={setParentCounter} 
-      cards={cards}  />
-
-      <Product currentUser={currentUser}/> */}
-          </main>
+          {isAuthentificated ? (
+            <main className="content container">
+              <Routes>
+                <Route path="/" element={<CatalogPage />}></Route>
+                <Route
+                  path="/product/:productId"
+                  element={<ProductPage setParentCounter={setParentCounter} />}
+                ></Route>
+                <Route path="faq" element={<FaqPage />}></Route>
+                <Route path="favorites" element={<Favorites />}></Route>
+                <Route
+                  path="login"
+                  element={
+                    <Modal
+                      activeModal={activeModal}
+                      setShowModal={setShowModal}
+                    >
+                      {" "}
+                      <Login setShowModal={setShowModal} />{" "}
+                    </Modal>
+                  }
+                ></Route>
+                <Route
+                  path="register"
+                  element={
+                    <Modal
+                      activeModal={activeModal}
+                      setShowModal={setShowModal}
+                    >
+                      {" "}
+                      <Register setShowModal={setShowModal} />{" "}
+                    </Modal>
+                  }
+                ></Route>
+                <Route
+                  path="reset-password"
+                  element={
+                    <Modal
+                      activeModal={activeModal}
+                      setShowModal={setShowModal}
+                    >
+                      {" "}
+                      <ResetPassword setShowModal={setShowModal} />{" "}
+                    </Modal>
+                  }
+                ></Route>
+                <Route path="*" element={<NotFound />}></Route>
+              </Routes>
+            </main>
+          ) : (
+            <div className="not__auth">
+              {" "}
+              Пожалуйста авторизуйтесь
+              <Routes>
+                <Route
+                  path="login"
+                  element={
+                    <Modal
+                      activeModal={activeModal}
+                      setShowModal={setShowModal}
+                    >
+                      {" "}
+                      <Login setShowModal={setShowModal} />{" "}
+                    </Modal>
+                  }
+                ></Route>
+                <Route
+                  path="register"
+                  element={
+                    <Modal
+                      activeModal={activeModal}
+                      setShowModal={setShowModal}
+                    >
+                      {" "}
+                      <Register setShowModal={setShowModal} />{" "}
+                    </Modal>
+                  }
+                ></Route>
+                <Route
+                  path="reset-password"
+                  element={
+                    <Modal
+                      activeModal={activeModal}
+                      setShowModal={setShowModal}
+                    >
+                      {" "}
+                      <ResetPassword setShowModal={setShowModal} />{" "}
+                    </Modal>
+                  }
+                ></Route>
+              </Routes>
+            </div>
+          )}
           <Footer />
         </CardContext.Provider>
       </UserContext.Provider>
     </>
   );
 }
-
 export default App;
-
-//useEffect(()=> {}) - апдейт на каждое изменение компонента
-//useEffect(()=> {}, {state}) - апдейт на каждое изменение  конкретного state
-//useEffect(()=> {}, []) - апдейт в самом начале
-
-// чистая функция это функция которая при одних и тех же параметрах возвращает одинаковый результат

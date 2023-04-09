@@ -1,0 +1,22 @@
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 14px 16px;
+  width: 356px;
+
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 20px;
+  color: #1a1a1a;
+  cursor: pointer;
+  border-radius: 55px;
+}
+.yellow {
+  border: none;
+  background-color: #ffe44d;
+}
+.white {
+  border: 1px solid #cfd8dc;
+  background-color: white;
+}

@@ -5,63 +5,76 @@ import cn from "classnames";
 import { ReactComponent as Save } from "./img/save.svg";
 import { useContext, useEffect, useState } from "react";
 import { api } from "../../utils/api";
-import { 
-  useLocation,
-  useNavigate,
-  useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../context/userContext";
 import { CardContext } from "../../context/cardContext";
 import { findLike } from "../../utils/utils";
-
-// const product_id = '622c781877d63f6e70967d29';
+import { Rating } from "../Rating/Rating";
 
 export const Product = ({ id }) => {
   const [product, setProduct] = useState({});
+  const [rate, setRate] = useState(3);
+  const [currentRating, setCurrentRating] = useState(0);
+
   useEffect(() => {
     api.getProductById(id).then((data) => setProduct(data));
   }, [id]);
 
-  // const navigate = useNavigate();
-  // const params = useParams();
-  
-  const currentUser = useContext(UserContext);
-  const setParentCounter = useContext(CardContext);
-  const handleProductLike = useContext(CardContext);
-  const isLiked = findLike(product, currentUser);
-  
-  const [productCount, setProductCount] = useState(0);
-  const location = useLocation();
-  const [liked, setLiked] = useState(false);
+  const navigate = useNavigate();
+  const params = useParams();
 
-  useEffect(() => {
-    if (location.search.includes("budget=3000")) {
-      // navigate('/part1')
-      // alert('you are really rich man');
-    }
-  }, []);
+  const { currentUser } = useContext(UserContext);
+  const { setParentCounter, handleProductLike } = useContext(CardContext);
+
+  const [productCount, setProductCount] = useState(1);
+
+  const isLiked = findLike(product, currentUser);
 
   const [showEdit, setShowEdit] = useState(false);
-  const [newName, setNewName] = useState(product?.name ?? '');
+  const [newName, setNewName] = useState(product?.name ?? "");
   const [newPrice, setNewPrice] = useState(product?.price ?? 0);
-  
-  // useEffect(() => {
-  //   // const isLiked = product?.likes?.some((el) => el === currentUser._id);
-  //   setLiked(isLiked);
-  // }, [product.likes?.length, product?.likes, currentUser]);
 
-
-  const handleLike = () => {
-    handleProductLike(product, isLiked);
-    setLiked((st) => !st);
+  const handleLike = async () => {
+    const newProduct = await handleProductLike(product);
+    console.log(newProduct);
+    setProduct(newProduct);
   };
 
-    const handleEditProduct = async () => {
-    await api.editProductById(product._id, {name: newName || product.name, price: newPrice || product.price} );
+  const handleEditProduct = async () => {
+    await api.editProductById(product._id, {
+      name: newName || product.name,
+      price: newPrice || product.price,
+    });
     setShowEdit(false);
-    };
+  };
+  useEffect(() => {
+    if (!product?.reviews) return;
+    const rateAcc = product.reviews.reduce(
+      (acc, el) => (acc = acc + el.rating),
+      0
+    );
+    const accum = Math.floor(rateAcc / product.reviews.length);
+    setRate(accum);
+    setCurrentRating(accum);
+  }, [product?.reviews]);
 
   return (
     <>
+      <div>
+        <span className="auth__info" onClick={() => navigate(-1)}>
+          {" "}
+          {"<"} Назад{" "}
+        </span>
+        <h1> {product.name} </h1>
+        <div className={s.rateInfo}>
+          <span>
+            {" "}
+            Артикул <b> 2398432</b>
+          </span>
+          <Rating rate={rate} setRate={setRate} currentRating={currentRating} />
+          <span>{product?.reviews?.length} отзывов </span>
+        </div>
+      </div>
       <div className={s.product}>
         <div className={s.imgWrapper}>
           <img className={s.img} src={product.pictures} alt={`Изображение`} />
@@ -71,7 +84,7 @@ export const Product = ({ id }) => {
           ))}
         </div>
         <div className={s.desc}>
-        <span className={s.name}>{product.name} </span>
+          <span className={s.name}>{product.name} </span>
           <span className={s.price}>{product.price} &nbsp;₽</span>
 
           {product.discount && (
@@ -85,7 +98,7 @@ export const Product = ({ id }) => {
               <button
                 className={s.controls__minus}
                 onClick={() =>
-                  productCount > 0 && setProductCount((state) => state - 1)
+                  productCount > 1 && setProductCount((state) => state - 1)
                 }
               >
                 -
@@ -100,7 +113,8 @@ export const Product = ({ id }) => {
             </div>
             <button
               onClick={() => setParentCounter((state) => state + productCount)}
-              className={`btn btn_type_primary ${s.controls__cart}`}>
+              className={`btn btn_type_primary ${s.controls__cart}`}
+            >
               В корзину
             </button>
           </div>
@@ -133,30 +147,37 @@ export const Product = ({ id }) => {
       </div>
 
       <div className={s.box}>
-
-        {showEdit && <div>
-          <div className={s.edit}>
-          <input type='text' placeholder="Изменить название продукта" onChange={(e)=> setNewName(e.target.value)}
-          defaultValue={newName}
-          />
-          <input type='number' placeholder="Изменить цену продукта" onChange={(e)=> setNewPrice(e.target.value)}
-          defaultValue={product.price}
-          />
-          <button
-              onClick={handleEditProduct}
-              className={`btn btn_type_primary ${s.cart}`}
-            >
-              Редактировать
-            </button>
+        {showEdit && (
+          <div>
+            <div className={s.edit}>
+              <input
+                type="text"
+                placeholder="Изменить название продукта"
+                onChange={(e) => setNewName(e.target.value)}
+                defaultValue={newName}
+              />
+              <input
+                type="number"
+                placeholder="Изменить цену продукта"
+                onChange={(e) => setNewPrice(e.target.value)}
+                defaultValue={product.price}
+              />
+              <button
+                onClick={handleEditProduct}
+                className={`btn btn_type_primary ${s.cart}`}
+              >
+                Редактировать
+              </button>
+            </div>
           </div>
-          </div>}
-          <button
-              onClick={() => setShowEdit(true)}
-              className={`btn btn_type_primary ${s.cart}`}
-            >
-              Редактировать товар
-            </button>
-            {/* <button
+        )}
+        <button
+          onClick={() => setShowEdit(true)}
+          className={`btn btn_type_primary ${s.cart}`}
+        >
+          Редактировать товар
+        </button>
+        {/* <button
               onClick={handleDeleteProduct}
               className={`btn btn_type_primary ${s.cart}`}
             >
@@ -191,6 +212,7 @@ export const Product = ({ id }) => {
           </div>
         </div>
       </div>
+      <div> Отзывы </div>
     </>
   );
 };

@@ -1,10 +1,11 @@
 import logoSrc from "./logo.svg";
 import "./index.css";
+import { Link } from "react-router-dom";
 
 export const Logo = () => {
   return (
-    <a href="/">
+    <Link to="/">
       <img src={logoSrc} alt="лого компании" className="logo-pic" />
-    </a>
+    </Link>
   );
 };

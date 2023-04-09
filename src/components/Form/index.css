@@ -1,0 +1,30 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.form__tittle {
+  font-family: "Nunito";
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 32px;
+  color: #0000;
+}
+.form__input {
+  padding: 6px;
+  border-radius: 10px;
+  border: 1px solid lightgrey;
+}
+.form__eye-wrapper {
+  position: relative;
+}
+.form__eye {
+  position: absolute;
+  right: 140px;
+  top: 0px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  z-index: 10;
+  cursor: pointer;
+}

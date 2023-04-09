@@ -24,9 +24,11 @@
 .imgWrapper {
   flex: 1;
 }
+
 .img {
   max-width: 488px;
 }
+
 .desc {
   max-width: 400px;
   flex-shrink: 0;
@@ -47,6 +49,7 @@
   display: block;
   margin-bottom: 24px;
 }
+
 .card__price_type_discount {
   font-size: 28px;
   line-height: 32px;
@@ -227,4 +230,9 @@
     display: inline-block;
     text-align: center;
   }
+}
+.rateInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }

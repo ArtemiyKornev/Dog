@@ -54,15 +54,16 @@ class Api {
       ...this._freshHeaders(),
       method: "POST",
       body: JSON.stringify({
-        name: "Рога оленя для собак весом от 10 до 30 кг. Размер L",
-        price: 800,
+        name: "Мелкая говяжья сушено-вяленая жилка",
+        price: 300,
         discount: 0,
-        wight: "1 шт",
+        wight: "100 г",
         description:
-          "Рога северного оленя содержат очень много полезных, 100% натуральных, питательных веществ и ничего искусственного.Природный источник кальция, витаминов, аминокислот, микроэлементов, глюкозамина и хондроитина. Гипоаллергенные - свободные от аллергенных веществ.",
+          "В процессе употребления данного лакомства происходит очищение зубов собаки от налёта и маленьких кусочков пищи за счет волокнистой структуры продукта. Укрепляются зубы и десна. Данное лакомство имеет самую высокую плотность среди всех лакомств для собак. Представляет собой высушенные говяжьи сухожилия. Источник необходимых для роста и развития суставно-связочного аппарата компонентов. Оказывает положительное воздействие на хрящевую и костную ткань.",
+
         available: true,
         stock: 10,
-        pictures: "https://react-learning.ru/image-compressed/16.jpg",
+        pictures: "https://react-learning.ru/image-compressed/4.jpg",
       }),
     }).then(onResponse);
   }
@@ -74,17 +75,42 @@ class Api {
       body: JSON.stringify(data),
     }).then((res) => onResponse(res));
   }
-
+  deleteProduct(productId) {
+    return fetch(`${this._baseUrl}/products/${productId}`, {
+      ...this._freshHeaders(),
+      method: "DELETE",
+    }).then((res) => onResponse(res));
+  }
   deleteProductId(productId) {
     return fetch(`${this._baseUrl}/products/${productId}`, {
       ...this._freshHeaders(),
       method: "DELETE",
     }).then(onResponse);
   }
+
   getUserInfo() {
     return fetch(`${this._baseUrl}/users/me`, {
       ...this._freshHeaders(),
     }).then((res) => onResponse(res));
+  }
+  getUsers() {
+    return fetch(`${this._baseUrl}/users`, {
+      ...this._freshToken(),
+    }).then(onResponse);
+  }
+  updateUserInfo(body) {
+    return fetch(`${this._baseUrl}/users/me`, {
+      ...this._freshToken(),
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }).then(onResponse);
+  }
+  updateUserAvatar(avatar) {
+    return fetch(`${this._baseUrl}/v2/group-10/users/me/avatar`, {
+      ...this._freshToken(),
+      method: "PATCH",
+      body: JSON.stringify(avatar),
+    }).then(onResponse);
   }
 
   searchProducts(query) {
@@ -92,6 +118,7 @@ class Api {
       ...this._freshHeaders(),
     }).then((res) => onResponse(res));
   }
+
   // like - true/false
   changeLikeProductStatus(productId, like) {
     return fetch(`${this._baseUrl}/products/likes/${productId}`, {
@@ -111,12 +138,7 @@ class Api {
       method: "PUT",
     }).then((res) => onResponse(res));
   }
-  deleteProduct(productId) {
-    return fetch(`${this._baseUrl}/products/${productId}`, {
-      ...this._freshHeaders(),
-      method: "DELETE",
-    }).then((res) => onResponse(res));
-  }
+
   deleteCommentProduct(productId, reviewId) {
     return fetch(`${this._baseUrl}/products/review/${productId}/${reviewId}`, {
       ...this._freshHeaders(),

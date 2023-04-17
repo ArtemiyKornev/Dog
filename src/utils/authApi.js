@@ -17,7 +17,7 @@ class Api {
     this._headers = data.headers;
   }
   // POST https://api.react-learning.ru/signup // регистрация { ...data, group: 'group-id'}
-  registerUser(data) {
+  registrationUser(data) {
     return fetch(`${this._baseUrl}/signup`, {
       headers: this._headers,
       method: "POST",
@@ -34,15 +34,15 @@ class Api {
   }
 
   // POST https://api.react-learning.ru/forgot-password сброс пароля на почту
-  resetPass(email) {
+  resetPassword(email) {
     return fetch(`${this._baseUrl}/forgot-password`, {
       headers: this._headers,
       method: "POST",
       body: JSON.stringify(email),
     }).then((res) => onResponse(res));
   }
-  // PATCH https://api.react-learning.ru/password-reset/:token // смена пароля после подтверж
-  changePass(token, password) {
+  // PATCH https://api.react-learning.ru/password-reset/:token // смена пароля после подтверждения
+  changePassword(token, password) {
     return fetch(`${this._baseUrl}/password-reset/${token}`, {
       headers: this._headers,
       method: "PATCH",

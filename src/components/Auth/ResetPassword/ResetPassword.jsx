@@ -3,21 +3,24 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../../../utils/authApi";
 import { pattern } from "../../../utils/validations";
+import { patternEmail } from "../../../utils/emailValidations";
 import { BaseButton } from "../../BaseButton/BaseButon";
 import { Form } from "../../Form/Form";
 import "../style.scss";
 
 export const ResetPassword = ({ setShowModal }) => {
-  const { tokenResp, setTokenResp } = useState(null);
+  const [tokenResp, setTokenResp] = useState(null);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({ mode: "onSubmit" });
+  const [type, setType] = useState(false);
 
   const emailRegister = register("email", {
     required: "Email обязателен",
+    patternEmail,
   });
   const passwordRegister = register("password", {
     required: tokenResp ? "Пароль обязателен" : false,
@@ -27,13 +30,17 @@ export const ResetPassword = ({ setShowModal }) => {
   useEffect(() => {
     setShowModal(true);
   }, [setShowModal]);
-
+  // const sendData = async (data) => {
+  //   try {
+  //     await authApi.resetPass({ ...data });
+  //   } catch (error) {
+  //     alert("Указан неверный адрес почты");
+  //   }
+  // };
   const sendData = async (data) => {
-    console.log({ data });
-
     if (!tokenResp) {
       try {
-        const res = await authApi.resetPass(data);
+        const res = await authApi.resetPassword(data);
         console.log({ res });
         setTokenResp(true);
       } catch (error) {
@@ -41,10 +48,8 @@ export const ResetPassword = ({ setShowModal }) => {
         alert("Что-то пошло не так");
       }
     } else {
-      console.log({ data });
-
       try {
-        const res = await authApi.changePass(data.token, {
+        const res = await authApi.changePassword(data.token, {
           password: data.password,
         });
         console.log({ res });
@@ -55,11 +60,6 @@ export const ResetPassword = ({ setShowModal }) => {
         alert("Что-то пошло не так");
       }
     }
-    // try {
-    //   await authApi.resetPass({ ...data });
-    // } catch (error) {
-    //   alert("Указан неверный адресс почты");
-    // }
   };
 
   const navigate = useNavigate();
@@ -81,26 +81,42 @@ export const ResetPassword = ({ setShowModal }) => {
           {errors?.email && (
             <span className="auth__warning">{errors.email?.message}</span>
           )}
-          <input
-            type={"password"}
-            {...passwordRegister}
-            placeholder="Пароль"
-            className="auth__input"
-            disabled={!tokenResp}
-          />
-          {errors?.password && (
-            <span className="auth__warning">{errors.password?.message}</span>
+          {tokenResp && (
+            <>
+              {" "}
+              <div className="auth__controls">
+                <input
+                  type={type ? "text" : "password"}
+                  {...passwordRegister}
+                  placeholder="Новый пароль"
+                  className="auth__input"
+                  disabled={!tokenResp}
+                />
+                <span
+                  className="form__eye-reset"
+                  onClick={() => setType(!type)}
+                >
+                  {type ? "Скрыть" : "Показать"}
+                </span>
+              </div>
+              {errors?.password && (
+                <span className="auth__warning">
+                  {errors.password?.message}
+                </span>
+              )}
+              <input
+                type={"text"}
+                {...register("token", {
+                  required: tokenResp ? "Токен обязателен" : false,
+                })}
+                placeholder="Токен"
+                className="auth__input"
+                disabled={!tokenResp}
+              />{" "}
+            </>
           )}
-          <input
-            type={"text"}
-            {...register("token", {
-              required: tokenResp ? "Токен обязателен" : false,
-            })}
-            placeholder="Токен"
-            className="auth__input"
-            disabled={!tokenResp}
-          />
-          <span className="auth__info" onClick={() => navigate(-1)}>
+
+          <span className="auth__info auth_back" onClick={() => navigate(-1)}>
             {"< "}Назад
           </span>
           <span className="auth__info">

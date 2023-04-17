@@ -23,7 +23,7 @@ export const Card = ({
   const handleDelete = () => {
     onProductDelete(product._id);
   };
-  
+
   // const ref=useRef();  ref={ref}
 
   const handleLikeClick = () => {
@@ -32,12 +32,13 @@ export const Card = ({
   const up = () => {
     window.scrollTo({
       top: 0,
-      behavior:"smooth",
-    }); };
+      behavior: "smooth",
+    });
+  };
   return (
-    <div onClick={()=>up()} className="card">
+    <div onClick={() => up()} className="card">
       <div className="card__sticky card__sticky_type_top-left">
-        <span className="card__discount" >{discount}%</span>
+        <span className="card__discount">{discount}%</span>
       </div>
       <div className="card__sticky card__sticky_type_top-right">
         <button
@@ -52,7 +53,7 @@ export const Card = ({
       <Link to={`/product/${product._id}`} className="card__link">
         <img src={pictures} alt="card__image" className="card__image" />
         <div className="card__desc">
-          <span className="card_old-price">222р</span>
+          {/* <span className="card_old-price">old price</span> */}
           <span className="card__price">{price}p</span>
           <span className="card_wight">{wight}</span>
           <p className="card__name">{name}</p>

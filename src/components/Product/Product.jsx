@@ -47,6 +47,7 @@ export const Product = ({ id }) => {
     });
     setShowEdit(false);
   };
+  //отзывы и рейтинг
   useEffect(() => {
     if (!product?.reviews) return;
     const rateAcc = product.reviews.reduce(
@@ -58,6 +59,9 @@ export const Product = ({ id }) => {
     setCurrentRating(accum);
   }, [product?.reviews]);
 
+  // const oldPrice = Math.floor(
+  //   product.price - (product.price / 100) * product.discount
+  // );
   return (
     <>
       <div>
@@ -78,15 +82,17 @@ export const Product = ({ id }) => {
       <div className={s.product}>
         <div className={s.imgWrapper}>
           <img className={s.img} src={product.pictures} alt={`Изображение`} />
-          {/* {['sale'].map((e) => <span className='tag tag_type_sale'>{e}</span>)} */}
+          {["sale"].map((e) => (
+            <span className="tag tag_type_sale">{e}</span>
+          ))}
           {product.tags?.map((e) => (
             <span className={`tag tag_type_${e}`}>{e}</span>
           ))}
         </div>
         <div className={s.desc}>
           <span className={s.name}>{product.name} </span>
+          {/* <div className="card_old-price">{oldPrice} ₽ </div> */}
           <span className={s.price}>{product.price} &nbsp;₽</span>
-
           {product.discount && (
             <span className={`${s.price} card__price_type_discount`}>
               {product.discount} &nbsp;%

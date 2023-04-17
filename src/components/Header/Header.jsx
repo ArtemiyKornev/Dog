@@ -71,14 +71,14 @@ export const Header = ({ setShowModal }) => {
               <Login />
             </Link>
           ) : (
-            <span onClick={handleLogout}> Logout</span>
+            <span onClick={handleLogout}> Выйти </span>
           )}
-
-          {/*  добавление продукта из api.js <button className="btn__addproduct" onClick={() => addProd()}>
+          {/* добавление продукта из api.js */}
+          {/* <button className="btn__addproduct" onClick={() => addProd()}>
             Добавить продукт
           </button> */}
         </div>
-        <span> {currentUser.name}, </span>
+        <span> {currentUser.name} </span>
         {/* <span> {currentUser.email} </span> */}
         <span> {currentUser.about} </span>
       </div>

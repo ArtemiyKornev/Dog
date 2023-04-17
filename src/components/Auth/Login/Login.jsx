@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { authApi } from "../../../utils/authApi";
 import { pattern } from "../../../utils/validations";
+import { patternEmail } from "../../../utils/emailValidations";
 
 import { BaseButton } from "../../BaseButton/BaseButon";
 import { Form } from "../../Form/Form";
@@ -35,6 +36,7 @@ export const Login = ({ setShowModal }) => {
 
   const emailRegister = register("email", {
     required: "Необходимо заполнить электронную почту",
+    patternEmail,
   });
 
   const passwordRegister = register("password", {

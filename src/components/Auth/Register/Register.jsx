@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Form } from "../../Form/Form";
 
 import "../style.scss";
@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { BaseButton } from "../../BaseButton/BaseButon";
 import { pattern } from "../../../utils/validations";
+import { patternEmail } from "../../../utils/emailValidations";
 import { authApi } from "../../../utils/authApi";
 
 export const Register = ({ setShowModal }) => {
@@ -15,17 +16,16 @@ export const Register = ({ setShowModal }) => {
     handleSubmit,
     formState: { errors },
   } = useForm({ mode: "onSubmit" });
-
+  const [type, setType] = useState(false);
   const navigate = useNavigate();
 
   const handleClick = (e) => {
     e.preventDefault();
-    console.log(e);
     navigate("/login");
   };
   const sendData = async (data) => {
     try {
-      await authApi.login({ ...data });
+      await authApi.registrationUser({ ...data, group: "group-10" });
       navigate("/login");
     } catch (error) {
       alert(error);
@@ -33,11 +33,13 @@ export const Register = ({ setShowModal }) => {
   };
   const emailRegister = register("email", {
     required: "Email обязателен",
+    patternEmail,
   });
   const passwordRegister = register("password", {
     required: "Пароль обязателен",
     pattern,
   });
+
   useEffect(() => {
     setShowModal(true);
   }, [setShowModal]);
@@ -55,12 +57,17 @@ export const Register = ({ setShowModal }) => {
           {errors?.email && (
             <span className="auth__warning">{errors.email?.message}</span>
           )}
-          <input
-            type={"password"}
-            {...passwordRegister}
-            placeholder="Пароль"
-            className="auth__input"
-          />
+          <div className="auth__controls">
+            <input
+              type={type ? "text" : "password"}
+              {...passwordRegister}
+              placeholder="Пароль"
+              className="auth__input"
+            />
+            <span className="form__eye" onClick={() => setType(!type)}>
+              {type ? "Скрыть" : "Показать"}
+            </span>
+          </div>
           {errors?.password && (
             <span className="auth__warning">{errors.password?.message}</span>
           )}

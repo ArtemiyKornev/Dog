@@ -16,8 +16,7 @@ import { Favorites } from "../../pages/Favorites/FavoritesPage";
 import { NotFound } from "../../pages/NotFound/NotFound";
 import { UserContext } from "../../context/userContext";
 import { CardContext } from "../../context/cardContext";
-import { RegistrationForm } from "../Form/RegistrationForm";
-import { Form } from "../Form/Form";
+// import { Form } from "../Form/Form";
 import { Modal } from "../Modal/Modal";
 import { Login } from "../Auth/Login/Login";
 import { Register } from "../Auth/Register/Register";
@@ -30,17 +29,17 @@ function App() {
   const [parentCounter, setParentCounter] = useState(0);
   const [currentUser, setCurrentUser] = useState({});
   const [favorites, setFavorites] = useState([]);
-  const [formData, setFormData] = useState([]);
+  // const [formData, setFormData] = useState([]);
   const [activeModal, setShowModal] = useState(false);
   const [isAuthentificated, setIsAuthentificated] = useState(false);
 
   // показ продуктов с фильтрацией по id пользователя
-  const filteredCards = (products, id) =>
-    products.filter((e) => e.author._id === id);
+  // const filteredCards = (products, id) =>
+  //   products.filter((e) => e.author._id === id);
   //  показ всех продуктов
-  // const filteredCards = (products, _id) => {
-  //   return products;
-  // };
+  const filteredCards = (products, _id) => {
+    return products;
+  };
   // поиск товара
   const handleSearch = (search) => {
     api
@@ -93,9 +92,9 @@ function App() {
         // сеттим карточки
         setCards(items);
         // получаем отлайканные нами карточки
-        const fav = items.filter((e) => findLike(e, userData));
+        const favor = items.filter((e) => findLike(e, userData));
         // сеттим карточки в избранный стейт
-        setFavorites(fav);
+        setFavorites(favor);
       }
     );
   }, [isAuthentificated]);

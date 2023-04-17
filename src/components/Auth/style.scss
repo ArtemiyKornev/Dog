@@ -17,8 +17,8 @@
     &:focus,
     &:hover,
     &:active {
-      border: 1px solid #ffe44d;
-      caret-color: #ffe44d;
+      border: 1px solid #000000;
+      caret-color: #000000;
     }
   }
   &__info {
@@ -45,5 +45,26 @@
   }
   &__back {
     width: fit-content;
+  }
+}
+.form {
+  &__eye-wrapper {
+    position: relative;
+  }
+
+  &__eye {
+    position: absolute;
+    color: #7b8e98;
+    height: auto;
+    right: 60px;
+    bottom: 30px;
+  }
+  &__eye-reset {
+    position: absolute;
+
+    color: #7b8e98;
+
+    margin-top: 14px;
+    right: 60px;
   }
 }

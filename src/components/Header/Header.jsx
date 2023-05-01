@@ -9,40 +9,30 @@ import { CardContext } from "../../context/cardContext";
 import { Link, useNavigate } from "react-router-dom";
 import { ReactComponent as Like } from "../Card/like.svg";
 import { ReactComponent as Login } from "./login.svg";
-import { api } from "../../utils/api";
+import { AddProduct } from "../AddProduct/AddProduct";
+import { BaseButton } from "../BaseButton/BaseButon";
+import { Form } from "../Form/Form";
+import { useForm } from "react-hook-form";
+import { Modal } from "../Modal/Modal";
 
-export const Header = ({ setShowModal }) => {
-  // const [state, setState] = useState(false);
-  const {
-    currentUser,
-    searchQuery,
-    setSearchQuery,
-    parentCounter,
-    isAuthentificated,
-  } = useContext(UserContext);
+export const Header = ({ setShowModal, id, product }) => {
+  const { searchQuery, setSearchQuery, parentCounter, isAuthentificated } =
+    useContext(UserContext);
   const [counter, setCounter] = useState(parentCounter);
   const { favorites } = useContext(CardContext);
+  const [createModal, setCreateModal] = useState(false);
 
   const navigate = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
-  // useEffect(()=>{
-  //   setCounter(counter + 1);
-  // }, [state, parentCounter]);
 
-  //use effect для корзины
   useEffect(() => {
     if (parentCounter === 0) return;
     setCounter((state) => state + 1);
     return () => setCounter(parentCounter);
   }, [parentCounter]);
-
-  //добавление продукта из api.js
-  // const addProd = async () => {
-  //   await api.addProduct();
-  // };
 
   return (
     <div className="header" id="head">
@@ -60,8 +50,15 @@ export const Header = ({ setShowModal }) => {
               )}
             </Link>
           </div>
-          <IconBasket count={parentCounter} />
-          <Vector />
+          <IconBasket count={parentCounter} clickFunction={() => {}} />
+          <Link
+            to={"/profile "}
+            className="header__bubble-link"
+            onClick={() => setShowModal(true)}
+          >
+            <Vector className="header__liked" />
+          </Link>
+
           {!isAuthentificated ? (
             <Link
               to={"/login"}
@@ -71,16 +68,25 @@ export const Header = ({ setShowModal }) => {
               <Login />
             </Link>
           ) : (
-            <span onClick={handleLogout}> Выйти </span>
+            <span onClick={handleLogout}> </span>
           )}
-          {/* добавление продукта из api.js */}
-          {/* <button className="btn__addproduct" onClick={() => addProd()}>
+          <button
+            className="btn btn_type_primary "
+            color={"yellow"}
+            onClick={() => setCreateModal(true)}
+          >
             Добавить продукт
-          </button> */}
+          </button>
+          {createModal && (
+            <Modal activeModal={AddProduct} setShowModal={setCreateModal}>
+              <AddProduct
+                id={id}
+                product={product}
+                setCreateModal={setCreateModal}
+              />
+            </Modal>
+          )}
         </div>
-        <span> {currentUser.name} </span>
-        {/* <span> {currentUser.email} </span> */}
-        <span> {currentUser.about} </span>
       </div>
     </div>
   );

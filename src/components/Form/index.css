@@ -1,8 +1,8 @@
-.form {
+/* .form {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-}
+} */
 .form__tittle {
   font-family: "Nunito";
   font-weight: 800;
@@ -10,6 +10,7 @@
   line-height: 32px;
   color: #0000;
 }
+
 .form__input {
   padding: 6px;
   border-radius: 10px;

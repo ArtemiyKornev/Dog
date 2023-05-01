@@ -49,22 +49,11 @@ class Api {
       body: JSON.stringify(data),
     }).then((res) => onResponse(res));
   }
-  addProduct() {
+  addProduct(data) {
     return fetch(`${this._baseUrl}/products`, {
       ...this._freshHeaders(),
       method: "POST",
-      body: JSON.stringify({
-        name: "Мелкая говяжья сушено-вяленая жилка",
-        price: 300,
-        discount: 0,
-        wight: "100 г",
-        description:
-          "В процессе употребления данного лакомства происходит очищение зубов собаки от налёта и маленьких кусочков пищи за счет волокнистой структуры продукта. Укрепляются зубы и десна. Данное лакомство имеет самую высокую плотность среди всех лакомств для собак. Представляет собой высушенные говяжьи сухожилия. Источник необходимых для роста и развития суставно-связочного аппарата компонентов. Оказывает положительное воздействие на хрящевую и костную ткань.",
-
-        available: true,
-        stock: 10,
-        pictures: "https://react-learning.ru/image-compressed/4.jpg",
-      }),
+      body: JSON.stringify(data),
     }).then(onResponse);
   }
 
@@ -95,19 +84,19 @@ class Api {
   }
   getUsers() {
     return fetch(`${this._baseUrl}/users`, {
-      ...this._freshToken(),
+      ...this._freshHeaders(),
     }).then(onResponse);
   }
   updateUserInfo(body) {
     return fetch(`${this._baseUrl}/users/me`, {
-      ...this._freshToken(),
+      ...this._freshHeaders(),
       method: "PATCH",
       body: JSON.stringify(body),
     }).then(onResponse);
   }
   updateUserAvatar(avatar) {
     return fetch(`${this._baseUrl}/v2/group-10/users/me/avatar`, {
-      ...this._freshToken(),
+      ...this._freshHeaders(),
       method: "PATCH",
       body: JSON.stringify(avatar),
     }).then(onResponse);
@@ -139,47 +128,20 @@ class Api {
     }).then((res) => onResponse(res));
   }
 
-  deleteCommentProduct(productId, reviewId) {
+  deleteReviewProduct(productId, reviewId) {
     return fetch(`${this._baseUrl}/products/review/${productId}/${reviewId}`, {
       ...this._freshHeaders(),
       method: "DELETE",
     }).then((res) => onResponse(res));
   }
-  getAllCommentProducts() {
-    return fetch(`${this._baseUrl}/products/review/`, {
-      ...this._freshHeaders(),
-      method: "GET",
-    }).then((res) => onResponse(res));
-  }
-  getCommentProduct(productId) {
-    return fetch(`${this._baseUrl}/products/review/${productId}`, {
-      ...this._freshHeaders(),
-      method: "GET",
-    }).then((res) => onResponse(res));
-  }
-  addCommentProduct(productId) {
+
+  addReviewProduct(productId, body) {
     return fetch(`${this._baseUrl}/products/review/${productId}`, {
       ...this._freshHeaders(),
       method: "POST",
+      body: JSON.stringify(body),
     }).then(onResponse);
   }
 }
 
 export const api = new Api(config);
-
-// написание без класов
-// export const  getProductList = ()  => {
-//   return fetch (`${config.baseUrl}/products` , {
-//     headers: config.headers,
-//   }).then((res) => onResponse(res));
-// }
-// export const  getUsersInfo = ()  => {
-//   return fetch (`${config.baseUrl}/users/me` , {
-//     headers: config.headers,
-//   }).then((res) => onResponse(res));
-// }
-// export const  searchProducts = ()  => {
-//   return fetch (`${config.baseUrl}products/search?query=${query}` , {
-//     headers: config.headers,
-//   }).then((res) => onResponse(res));
-// }

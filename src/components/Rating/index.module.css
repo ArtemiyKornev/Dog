@@ -1,4 +1,6 @@
 .filled {
   fill: #ffaa0d;
+}
+.editable {
   cursor: pointer;
 }

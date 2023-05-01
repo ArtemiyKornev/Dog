@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { Form } from "../../Form/Form";
-
 import "../style.scss";
 import { useForm } from "react-hook-form";
-
 import { useNavigate } from "react-router-dom";
 import { BaseButton } from "../../BaseButton/BaseButon";
 import { pattern } from "../../../utils/validations";

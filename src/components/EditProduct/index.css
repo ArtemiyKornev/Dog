@@ -1,0 +1,25 @@
+.edit__product {
+  padding: 1rem;
+}
+
+.edit__product__input {
+  padding: 0 16px;
+  gap: 10px;
+  height: 2.5rem;
+  width: 20rem;
+  background: #ffffff;
+  border: 1px solid #cfd8dc;
+  border-radius: 12px;
+}
+
+.edit__form__input {
+  max-width: 740px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.edit__btn {
+  margin: 10px;
+  margin-left: 25%;
+}

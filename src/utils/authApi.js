@@ -9,14 +9,12 @@ const onResponse = (res) => {
   return res.ok ? res.json() : Promise.reject("Error");
 };
 
-// написание через классы
-
 class Api {
   constructor(data) {
     this._baseUrl = data.baseUrl;
     this._headers = data.headers;
   }
-  // POST https://api.react-learning.ru/signup // регистрация { ...data, group: 'group-id'}
+
   registrationUser(data) {
     return fetch(`${this._baseUrl}/signup`, {
       headers: this._headers,
@@ -24,7 +22,7 @@ class Api {
       body: JSON.stringify(data),
     }).then((res) => onResponse(res));
   }
-  // POST https://api.react-learning.ru/signin // авторизация
+
   login(dataUser) {
     return fetch(`${this._baseUrl}/signin`, {
       headers: this._headers,
@@ -33,7 +31,6 @@ class Api {
     }).then((res) => onResponse(res));
   }
 
-  // POST https://api.react-learning.ru/forgot-password сброс пароля на почту
   resetPassword(email) {
     return fetch(`${this._baseUrl}/forgot-password`, {
       headers: this._headers,
@@ -41,7 +38,7 @@ class Api {
       body: JSON.stringify(email),
     }).then((res) => onResponse(res));
   }
-  // PATCH https://api.react-learning.ru/password-reset/:token // смена пароля после подтверждения
+
   changePassword(token, password) {
     return fetch(`${this._baseUrl}/password-reset/${token}`, {
       headers: this._headers,

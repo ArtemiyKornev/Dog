@@ -7,8 +7,9 @@ import { Sort } from "../../components/Sort/Sort";
 import "./index.css";
 
 export const CatalogPage = ({}) => {
-  const { cards } = useContext(CardContext);
   const { searchQuery } = useContext(UserContext);
+  const { cards } = useContext(CardContext);
+
   return (
     <>
       {searchQuery && (

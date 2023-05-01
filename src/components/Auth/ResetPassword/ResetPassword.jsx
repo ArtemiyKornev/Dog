@@ -30,13 +30,7 @@ export const ResetPassword = ({ setShowModal }) => {
   useEffect(() => {
     setShowModal(true);
   }, [setShowModal]);
-  // const sendData = async (data) => {
-  //   try {
-  //     await authApi.resetPass({ ...data });
-  //   } catch (error) {
-  //     alert("Указан неверный адрес почты");
-  //   }
-  // };
+
   const sendData = async (data) => {
     if (!tokenResp) {
       try {

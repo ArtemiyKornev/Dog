@@ -15,7 +15,7 @@
   position: relative;
 }
 
-/* Горизонтальная */
+/* по горизонтали */
 .accordionButton::before {
   content: "";
   width: 14px;
@@ -28,7 +28,7 @@
   transition: all 0.3s;
 }
 
-/* Вертикальная */
+/* по вертикали */
 .accordionButton::after {
   content: "";
   width: 2px;

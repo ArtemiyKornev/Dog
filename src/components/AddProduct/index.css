@@ -1,0 +1,24 @@
+.add__product {
+  padding: 1rem;
+}
+
+.add__product__input {
+  padding: 0 16px;
+  gap: 10px;
+  height: 48px;
+  width: 20rem;
+  background: #ffffff;
+  border: 1px solid #cfd8dc;
+  border-radius: 12px;
+}
+
+.add__form__input {
+  max-width: 740px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.add__btn {
+  margin: 10px;
+  margin-left: 25%;
+}

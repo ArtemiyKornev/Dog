@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { authApi } from "../../../utils/authApi";
 import { pattern } from "../../../utils/validations";
 import { patternEmail } from "../../../utils/emailValidations";
-
 import { BaseButton } from "../../BaseButton/BaseButon";
 import { Form } from "../../Form/Form";
 import "../style.scss";
@@ -29,7 +28,6 @@ export const Login = ({ setShowModal }) => {
       localStorage.setItem("token", res.token);
       navigate("/");
     } catch (error) {
-      console.log();
       alert("Неправильный логин или пароль");
     }
   };
